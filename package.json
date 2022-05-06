@@ -8,6 +8,7 @@
 		"socket.io": "^4.5.0"
 	},
 	"scripts":{
-		"server":"node index.js"
+		"server":"node index.js",
+		"start":"node index.js"
 	}
 }
