@@ -37,6 +37,11 @@ function createGame(sel){
 				game.drawBlock({x:j,y:i},game.board[i][j]);
 			}
 		}
+
+		game.ctx.strokeStyle = 'black 5px';
+		game.ctx.lineWidth = 5;
+		game.ctx.lineJoin = 'bevel';
+		game.ctx.strokeRect(0,0,game.canvas.width,game.canvas.height);
 	};
 
 	function $$button(color,button){
@@ -74,8 +79,8 @@ function createGame(sel){
 		if (game.mousedown) {
 			if (game.mousein) {
 				let pos = {
-					x:parseInt(mpos.clientX/game.options.canvas.blockWidth - 1),
-					y:parseInt(mpos.clientY/game.options.canvas.blockHeight - 1)
+					x:parseInt(mpos.offsetX/game.options.canvas.blockWidth),
+					y:parseInt(mpos.offsetY/game.options.canvas.blockHeight)
 				};
 
 				if (game.$blockCache) {

@@ -1,5 +1,6 @@
 canvas.game {
 	float: left;
+	border-width: 5px;
 }
 
 .bt {

@@ -1,12 +1,12 @@
 {
 	"port":80,
 	"boardSize":{
-		"width":100,
-		"height":100
+		"width":200,
+		"height":200
 	},
 	"canvas":{
-		"blockWidth":5,
-		"blockHeight":5
+		"blockWidth":4,
+		"blockHeight":4
 	},
 	"COLORS":{
 		"0":"white",
@@ -14,7 +14,23 @@
 		"2":"blue",
 		"3":"green",
 		"4":"red",
-		"5":"yellow"
+		"5":"yellow",
+		"6":"grey",
+		"7":"orange",
+		"8":"purple",
+		"9":"pink",
+		"10":"teal",
+		"11":"olive",
+		"12":"silver",
+		"13":"navy",
+		"14":"maroon",
+		"15":"fuchsia",
+		"16":"aqua",
+		"17":"lime",
+		"18":"azure",
+		"19":"brown",
+		"20":"chocolate",
+		"21":"crimson"
 	},
 	"initialColor":"0"
 }
