@@ -86,10 +86,12 @@ function createGame(sel){
 				if (game.$blockCache) {
 					if (game.$blockCache !== pos) {
 						socket.emit('change-color',pos,game.activeColor);
+						game.drawBlock(pos,game.activeColor);
 						game.$blockCache = pos;
 					}
 				} else {
 					socket.emit('change-color',pos,game.activeColor);
+					game.drawBlock(pos,game.activeColor);
 					game.$blockCache = pos;
 				}
 			}
