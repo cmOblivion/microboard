@@ -1,0 +1,14 @@
+canvas.game {
+	float: left;
+}
+
+.bt {
+	height: 50px;
+	width: 50px;
+	float: top;
+	border-radius: 5px;
+}
+
+.btActive {
+	border-width: thick;
+}
