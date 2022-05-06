@@ -10,5 +10,8 @@
 	"scripts":{
 		"server":"node index.js",
 		"start":"node index.js"
+	},
+	"engines":{
+		"node":"17.8.0"
 	}
 }
