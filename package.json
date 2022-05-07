@@ -1,17 +1,17 @@
 {
 	"name": "microboard",
-	"main":"index.js",
+	"main": "index.js",
 	"version": "1.0.0",
 	"author": "cm",
 	"dependencies": {
 		"express": "^4.18.1",
+		"redis": "^4.1.0",
 		"socket.io": "^4.5.0"
 	},
-	"scripts":{
-		"server":"node index.js",
-		"start":"node index.js"
+	"scripts": {
+		"server": "node server.js"
 	},
-	"engines":{
-		"node":"17.8.0"
+	"engines": {
+		"node": "17.8.0"
 	}
 }
