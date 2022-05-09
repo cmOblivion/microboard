@@ -42,6 +42,8 @@ async function create(options){
 	};
 
 	sv.connect = (socket) => {
+		socket.data.logined = false;
+
 		socket.on('register',(data) => {
 			let exists;
 
@@ -74,8 +76,10 @@ async function create(options){
 		socket.on('login',(user) => {
 			sv.db.isUser(user).then((isuser) => {
 				if (isuser) {
-					socket.data.username = user.username;
-					socket.data.password = user.password;
+					socket.data.logined = true;
+					socket.data.user = {};
+					socket.data.user.username = user.username;
+					socket.data.user.password = user.password;
 					socket.send({
 						code:200,
 						message:'已登录！',
@@ -87,6 +91,11 @@ async function create(options){
 					});
 				}
 			});
+		});
+
+		socket.on('logout',() => {
+			socket.data.logined = false;
+			socket.data.user = null;
 		});
 	};
 

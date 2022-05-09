@@ -93,6 +93,23 @@ export function createApp(root){
 
 				io.emit('register',form);
 			},
+			// 登出，由子组件触发
+			logout(){
+				Cookies.remove('username');
+				Cookies.remove('password');
+
+				this.logined = false;
+				this.user = null;
+
+				io.emit(logout);
+
+				setTimeout(ElementPlus.ElNotification.bind(this,({
+					type:'success',
+					message:'登出成功！',
+					title:'提示',
+					duration:1500,
+				})),100);
+			},
 		},
 		components:{
 			'mb-menu':components.Menu,

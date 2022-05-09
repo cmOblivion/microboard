@@ -1,7 +1,7 @@
 // 首页组件
 let Home = {
 	template:`
-		<el-button type="primary">Hi!</el-button>
+		<h1>Welcome to Microboard!</h1>
 	`,
 };
 
@@ -10,10 +10,9 @@ let Menu = {
 	data(){
 		return {
 			active:'/',
-		}
+		};
 	},
 	template:`
-		<h3 id="menu-title">!Microboard!</h3>
 		<el-menu router="true" :default-active="active">
 			<el-menu-item index="/">
 				<el-icon><house /></el-icon>
@@ -27,10 +26,23 @@ let Menu = {
 				<el-icon><avatar /></el-icon>
 				好友
 			</el-menu-item>
-			<el-submenu>
-			</el-submenu>
+			<el-sub-menu>
+				<template #title>
+					<el-icon><setting /></el-icon>
+					<span>设置</span>
+				</template>
+				<el-menu-item index="/home" @click="logout">
+					<el-icon><switch-button /></el-icon>
+					登出
+				</el-form-item>
+			</el-sub-menu>
 		</el-menu>
 	`,
+	methods:{
+		logout(){
+			this.$emit('logout');
+		},
+	}
 };
 
 let Login = {
@@ -130,10 +142,17 @@ let Login = {
 	}
 };
 
+let NotFound = {
+	template:`
+		<img class="not-found" src="https://cdn.jsdelivr.net/gh/pratik23rj/404_page@master/error.svg"></img>
+	`,
+};
+
 let components = {
 	Home,
 	Menu,
 	Login,
+	NotFound,
 };
 
 export default components;
