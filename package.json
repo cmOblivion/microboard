@@ -9,9 +9,13 @@
 		"socket.io": "^4.5.0"
 	},
 	"scripts": {
-		"server": "node server.js"
+		"server": "node server.js",
+		"make": "npx webpack -c wepack.config.js"
 	},
 	"engines": {
 		"node": "17.8.0"
+	},
+	"devDependencies": {
+		"webpack-cli": "^4.9.2"
 	}
 }

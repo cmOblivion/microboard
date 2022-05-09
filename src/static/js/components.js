@@ -1,3 +1,5 @@
+import { vm } from './vm.js';
+
 // 首页组件
 let Home = {
 	template:`
@@ -130,7 +132,7 @@ let Login = {
 				this.$emit('register',{
 					username:form.username,
 					password:form.password1,
-				});
+				},this);
 			} else {
 					ElementPlus.ElNotification({
 						type:'error',
@@ -148,11 +150,113 @@ let NotFound = {
 	`,
 };
 
+let Friends = {
+	template:`
+		<el-card class="friend-option-card">
+			<el-button type="primary" @click="addFriend" :icon="Plus">
+				添加好友
+			</el-button>
+		</el-card>
+		<div v-for="(f,i) in list">
+			<el-card class="friend-card" shadow="hover">
+				<div class="friend-card-header">
+					<span>{{ f.username }}</span>
+					<el-button-group>
+						<el-button type="primary" :icon="ChatDotRound">聊天</el-button>
+						<el-button :icon="Delete" @click="deleteFriendConfirm(f.username)">删除</el-button>
+					</el-button-group>
+				</div>
+			</el-card>
+		</div>
+
+		<el-card class="friend-card" shadow="hover" v-if="hasFriend">
+			<div class="friend-card-header">
+				<span>还想还没有好友哦，快去叫几个小伙伴吧~</span>
+			</div>
+		</el-card>
+
+		<el-dialog 
+			v-model="isAddingFriend" 
+			width="600px"
+			title="添加好友"
+			draggable="true"
+			center="true"
+		>
+			<el-input placeholder="好友名" v-model="friendname" />
+			<template #footer>
+				<el-button type="primary" @click="submitAddFriend">添加</el-button>
+			</template>
+		</el-dialog>
+
+		<el-dialog
+			v-model="deleteConfirm"
+			title="确认"
+			center="true"
+			width="400px"
+		>
+			<span>确认删除好友 {{ confirmUser }} 吗？（聊天记录不会删除）</span>
+			<template #footer>
+				<el-button type="primary" @click="deleteFriend">确认</el-button>
+				<el-button @click="this.deleteConfirm=false">取消</el-button>
+			</template>
+		</el-dialog>
+	`,
+	data(){
+		return {
+			list:vm.friendlist,
+			hasFriend:false,
+			isAddingFriend:false,
+			friendname:'',
+			ChatDotRound:ElementPlusIconsVue.ChatDotRound,
+			Plus:ElementPlusIconsVue.Plus,
+			Delete:ElementPlusIconsVue.Delete,
+			deleteConfirm:false,
+			confirmUser:'',
+		};
+	},
+	created(){
+		vm.$watch('friendlist',() => {
+			this.list = vm.friendlist;
+			this.hasFriend = !this.list.length;
+		});
+
+		vm.getFriendList();
+	},
+	methods:{
+		addFriend(){
+			this.isAddingFriend = true;
+		},
+		submitAddFriend(){
+			vm.addFriend(this.friendname,() => this.isAddingFriend = false);
+		},
+		deleteFriendConfirm(name){
+			this.deleteConfirm = true;
+			this.confirmUser = name;
+		},
+		deleteFriend(){
+			vm.deleteFriend(this.confirmUser);
+			this.deleteConfirm = false;
+		}
+	},
+};
+
+let FriendCard = {
+	props:['friend'],
+	data(){
+		console.log(this.props);
+		return {};
+	},
+	template:`
+	`,
+};
+
 let components = {
 	Home,
 	Menu,
 	Login,
 	NotFound,
+	Friends,
+	FriendCard,
 };
 
 export default components;

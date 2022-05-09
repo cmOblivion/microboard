@@ -21,9 +21,9 @@
 				<mb-menu @logout="logout"></mb-menu>
 			</el-aside>
 			<el-main>
-				<router-view></router-view>
+				<router-view>
+				</router-view>
 			</el-main>
-			<div id="login-dialog">
 			<mb-login :need="!logined" @login="login" @register="register"></mb-login>
 		</el-container>
 	</div>

@@ -1,5 +1,6 @@
 import routes from "./routes.js";
 import components from "./components.js";
+import { vm,setVM } from "./vm.js";
 
 let sio = io;	// 缓存socket.io
 
@@ -17,7 +18,11 @@ export function createApp(root){
 			return {
 				logined:true,
 				user:null,
+				friendlist:[],
 			};
+		},
+		created(){
+			setVM(this);
 		},
 		mounted(){
 			this.checkLogined();
@@ -25,7 +30,7 @@ export function createApp(root){
 		methods:{
 			// 检测登录状态
 			checkLogined(){
-				if (this?.io?.get('username') && this?.io?.get('password')) {
+				if (this.user !== null) {
 					this.logined = true;
 				} else {
 					if (typeof (Cookies.get('username') 
@@ -72,7 +77,7 @@ export function createApp(root){
 				io.emit('login',data);
 			},
 			// 注册，由子组件触发
-			register(form){
+			register(form,child){
 				io.once('message',(result) => {
 					if (result.code === 200) {
 						ElementPlus.ElNotification({
@@ -80,6 +85,8 @@ export function createApp(root){
 							title:'提示',
 							message:result.message,
 						});
+
+						child.registering = false;
 
 						this.login(form);
 					} else {
@@ -101,22 +108,90 @@ export function createApp(root){
 				this.logined = false;
 				this.user = null;
 
-				io.emit(logout);
+				io.emit('logout');
 
-				setTimeout(ElementPlus.ElNotification.bind(this,({
-					type:'success',
-					message:'登出成功！',
-					title:'提示',
-					duration:1500,
-				})),100);
+				setTimeout(() => {
+					ElementPlus.ElNotification({
+						type:'success',
+						message:'登出成功！',
+						title:'提示',
+						duration:1500,
+					});
+				},80);
 			},
+			getFriendList(){
+				if (this.logined) {
+					io.once('friends',(result) => {
+						this.friendlist = result;
+					});
+
+					io.emit('friends');
+				} else {
+					setTimeout(() => {
+						io.once('friends',(result) => {
+							this.friendlist = result;
+						});
+
+						io.emit('friends');
+					},500);
+				}
+			},
+			addFriend(name,success){
+				io.once('message',(result) => {
+					this.getFriendList();
+
+					if (result.code === 200) {
+						ElementPlus.ElNotification({
+							type:'success',
+							message:result.message,
+							title:'提示',
+							duration:2000,
+						});
+
+						success();
+					} else {
+						ElementPlus.ElNotification({
+							type:'error',
+							message:result.message,
+							title:'错误',
+							duration:2000,
+						});
+					}
+				});
+
+				io.emit('add-friend',name);
+			},
+			deleteFriend(name){
+				io.once('message',(result) => {
+					if (result.code === 200) {
+						ElementPlus.ElNotification({
+							type:'success',
+							message:result.message,
+							title:'提示',
+							duration:2000,
+						});
+
+						this.getFriendList();
+					} else {
+						ElementPlus.ElNotification({
+							type:'error',
+							message:result.message,
+							title:'错误',
+							duration:2000,
+						});
+					}
+				});
+
+				io.emit('delete-friend',name);
+			}
 		},
 		components:{
 			'mb-menu':components.Menu,
 			'mb-login':components.Login,
+			'mb-friend-card':components.FriendCard,
 		},
 	});
-	
+
 	app.io = io;
 	app.use(router);
 	app.use(ElementPlus);	// 引入element-plus组件库

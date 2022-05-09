@@ -97,6 +97,67 @@ async function create(options){
 			socket.data.logined = false;
 			socket.data.user = null;
 		});
+
+		socket.on('friends',() => {
+			if (socket.data.logined) {
+				sv.db.getFriendList(socket.data.user.username).then((result) => {
+					socket.emit('friends',result);
+				});
+			} else {
+				socket.emit('friends',[]);
+			}
+		});
+
+		socket.on('add-friend',(name) => {
+			if (socket.data.logined) {
+				sv.db.addFriend(socket.data.user.username,name).then((result) => {
+					if (result === 1) {
+						socket.send({
+							code:200,
+							message:'添加好友成功！',
+						});
+					} else if (result === 0) {
+						socket.send({
+							code:400,
+							message:'好友不存在！',
+						});
+					} else if (result === 2) {
+						socket.send({
+							code:400,
+							message:'他（她）已经是你好友了！',
+						});
+					}
+				});
+			} else {
+				socket.send({
+					code:400,
+					message:'请先登录！',
+				});
+			}
+		});
+
+		socket.on('delete-friend',(name) => {
+			if (socket.data.logined) {
+				sv.db.deleteFriend(socket.data.user.username,name).then((result) => {
+					if (result === 0) {
+						socket.send({
+							code:200,
+							message:'删除好友成功！',
+						});
+					} else {
+						socket.send({
+							code:500,
+							message:'未知错误！',
+						});
+					}
+				});
+			} else {
+				socket.send({
+					code:400,
+					message:'请先登录！',
+				});
+			}
+		});
 	};
 
 	return server;

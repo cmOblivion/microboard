@@ -39,5 +39,36 @@ module.exports = {
 	async isUser(user){
 		const u = await this.client.HGETALL('u'+user.username);
 		return u?.n === user.username && u?.p === user.password;
+	},
+	async getFriendList(username){
+		const u = await this.client.SMEMBERS('uf'/* 好友列表前缀 */+username);
+		let list = [];
+		for (let f of u) {
+			list.push({ username:f });
+		}
+
+		return list || [];
+	},
+	async addFriend(me,name){
+		let has = await this.isUsernameExits(name);
+		if (has) {
+			if (await this.client.SISMEMBER('uf'+me,name)) {
+				return 2;
+			} else {
+				await this.client.SADD('uf'+me,name);
+				return 1;
+			}
+		} else {
+			return 0;
+		}
+	},
+	async deleteFriend(me,name){
+		let has = await this.isUsernameExits(name);
+		if (has) {
+			await this.client.SREM('uf'+me,name)
+			return 0;
+		} else {
+			return 1;
+		}
 	}
 };
