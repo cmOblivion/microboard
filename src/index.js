@@ -4,7 +4,7 @@ const express = require("express"),
 	{ join } = require("path"),
 	db = require('./db');
 
-function create(options){
+async function create(options){
 	let server = sv = {
 		options,
 		dir:__dirname
@@ -27,6 +27,10 @@ function create(options){
 			res.sendFile(join(sv.dir,'static/index.html'));
 		});
 
+		sv.app.get('/favicon.ico',(req,res) => {
+			res.sendFile(join(sv.dir,'static/logo.png'));
+		});
+
 		sv.io.on('connection',sv.connect);
 
 		// 连接数据库
@@ -38,9 +42,52 @@ function create(options){
 	};
 
 	sv.connect = (socket) => {
-		socket.on('request-config',() => {
-			socket.emit('config',sv.options.client);
-		})
+		socket.on('register',(data) => {
+			let exists;
+
+			sv.db.isUsernameExits(data.username).then(result => {
+				exists = result;
+
+				if (exists) {
+					socket.send({
+						code:400,
+						message:'用户名已存在！',
+					});
+				} else {
+					sv.db.register(data).then(err => {
+						if (!err) {
+							socket.send({
+								code:200,
+								message:'注册成功！',
+							});
+						} else {
+							socket.send({
+								code:500,
+								message:'发生未知错误！',
+							});
+						}
+					});
+				}
+			});
+		});
+
+		socket.on('login',(user) => {
+			sv.db.isUser(user).then((isuser) => {
+				if (isuser) {
+					socket.data.username = user.username;
+					socket.data.password = user.password;
+					socket.send({
+						code:200,
+						message:'已登录！',
+					});
+				} else {
+					socket.send({
+						code:400,
+						message:'登录失败！',
+					});
+				}
+			});
+		});
 	};
 
 	return server;

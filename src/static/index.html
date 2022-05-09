@@ -3,11 +3,28 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Microboard!</title>
+	<title>!Microboard!</title>
 	<script type="module" src="/static/js/index.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@3.2.33/dist/vue.global.prod.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue-router@4.0.15/dist/vue-router.global.prod.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/element-plus@2.1.11"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue"></script>
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie"></script>
+	<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.5.0/dist/socket.io.min.js"></script>
 	<link rel="stylesheet" href="/static/style/index.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus/dist/index.css">
 </head>
 <body>
-	<div id="app"></div>
+	<div id="app">
+		<el-container>
+			<el-aside>
+				<mb-menu></mb-menu>
+			</el-aside>
+			<el-main>
+				<router-view></router-view>
+			</el-main>
+			<mb-login :need="!logined" @login="login" @register="register"></mb-login>
+		</el-container>
+	</div>
 </body>
 </html>
