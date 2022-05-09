@@ -210,12 +210,6 @@ let Friends = {
 				<el-button @click="this.deleteConfirm=false">取消</el-button>
 			</template>
 		</el-dialog>
-
-		<mb-friend 
-			:show="isChatting"
-			:friend="chatUser"
-		>
-		</mb-friend>
 	`,
 	data(){
 		return {
@@ -228,8 +222,6 @@ let Friends = {
 			Delete:ElementPlusIconsVue.Delete,
 			deleteConfirm:false,
 			confirmUser:'',
-			isChatting:false,
-			chatUser:'',
 		};	
 	},
 	created(){
@@ -256,39 +248,43 @@ let Friends = {
 			this.deleteConfirm = false;
 		},
 		chat(name){
-			this.isChatting = true;
-			this.chatUser = name;
+			this.$router.push(`/friend/${name}`);
 		},
 	},
 };
 
+let lastPage = '';
 let Friend = {
 	template:`
-		<el-dialog
-			v-model="show"
-			:title="friend"
-			fullscreen="true"
-			center="true"
-		>
-			<el-row>
-				<el-col :span="10">
-					<el-input placeholder="说点什么吧..." />
-				</el-cow>
-				<el-cow :span="10">
-					<el-button type="primary">发送</el-button>
-				</el-col>
-			</el-row>
-			</template>
-		</el-dialog>
+		<el-page-header title="返回" :content="name" @back="goBack" />
+		<div class="input-message">
+			<el-input placeholder="说点什么吧..." v-model="message">
+				<template #append>
+					<el-button :icon="SendIcon" @click="sendMessage">发送</el-button>
+				</template>
+			</el-input>
+		</div>
 	`,
-	props:['friend','show'],
 	data(){
 		return {
-
+			name:this.$route.params.name,
+			SendIcon:ElementPlusIconsVue.Select,
+			message:'',
 		};
 	},
 	methods:{
-
+		goBack(){
+			this.$router.push(lastPage);
+		},
+		sendMessage(){
+			vm.sendMessage(this.name,this.message,() => {
+				this.message = '';
+			});
+		},
+	},
+	beforeRouteEnter(to,from,next){
+		lastPage = from;
+		next();
 	},
 };
 

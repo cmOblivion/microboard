@@ -189,7 +189,10 @@ export function createApp(root){
 				});
 
 				io.emit('delete-friend',name);
-			}
+			},
+			sendMessage(to,msg){
+
+			},
 		},
 		components:{
 			'mb-menu':components.Menu,

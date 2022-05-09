@@ -23,3 +23,9 @@
 	height: 90px;
 	align-items: center;
 }
+
+.input-message {
+	position: fixed;
+	bottom: 3%;
+	width: 65%;
+}
