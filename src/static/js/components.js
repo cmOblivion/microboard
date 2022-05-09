@@ -2,8 +2,18 @@ import { vm } from './vm.js';
 
 // 首页组件
 let Home = {
+	data(){
+		vm.$watch('user',() => {
+			this.username = vm?.user?.username;
+			this.logined = vm.logined;
+		});
+		return {
+			username:vm?.user?.username,
+			logined:vm.logined,
+		};
+	},
 	template:`
-		<h1>Welcome to Microboard!</h1>
+		<h2 v-if="logined">欢迎，{{ username }}！</h2>
 	`,
 };
 
@@ -146,7 +156,7 @@ let Login = {
 
 let NotFound = {
 	template:`
-		<img class="not-found" src="https://cdn.jsdelivr.net/gh/pratik23rj/404_page@master/error.svg"></img>
+		<img class="not-found" src="https://cdn.jsdelivr.net/gh/pratik23rj/404_page/error.svg"></img>
 	`,
 };
 
@@ -162,7 +172,7 @@ let Friends = {
 				<div class="friend-card-header">
 					<span>{{ f.username }}</span>
 					<el-button-group>
-						<el-button type="primary" :icon="ChatDotRound">聊天</el-button>
+						<el-button type="primary" :icon="ChatDotRound" @click="chat(f.username)">聊天</el-button>
 						<el-button :icon="Delete" @click="deleteFriendConfirm(f.username)">删除</el-button>
 					</el-button-group>
 				</div>
@@ -200,6 +210,12 @@ let Friends = {
 				<el-button @click="this.deleteConfirm=false">取消</el-button>
 			</template>
 		</el-dialog>
+
+		<mb-friend 
+			:show="isChatting"
+			:friend="chatUser"
+		>
+		</mb-friend>
 	`,
 	data(){
 		return {
@@ -212,7 +228,9 @@ let Friends = {
 			Delete:ElementPlusIconsVue.Delete,
 			deleteConfirm:false,
 			confirmUser:'',
-		};
+			isChatting:false,
+			chatUser:'',
+		};	
 	},
 	created(){
 		vm.$watch('friendlist',() => {
@@ -236,18 +254,42 @@ let Friends = {
 		deleteFriend(){
 			vm.deleteFriend(this.confirmUser);
 			this.deleteConfirm = false;
-		}
+		},
+		chat(name){
+			this.isChatting = true;
+			this.chatUser = name;
+		},
 	},
 };
 
-let FriendCard = {
-	props:['friend'],
-	data(){
-		console.log(this.props);
-		return {};
-	},
+let Friend = {
 	template:`
+		<el-dialog
+			v-model="show"
+			:title="friend"
+			fullscreen="true"
+			center="true"
+		>
+			<el-row>
+				<el-col :span="10">
+					<el-input placeholder="说点什么吧..." />
+				</el-cow>
+				<el-cow :span="10">
+					<el-button type="primary">发送</el-button>
+				</el-col>
+			</el-row>
+			</template>
+		</el-dialog>
 	`,
+	props:['friend','show'],
+	data(){
+		return {
+
+		};
+	},
+	methods:{
+
+	},
 };
 
 let components = {
@@ -256,7 +298,7 @@ let components = {
 	Login,
 	NotFound,
 	Friends,
-	FriendCard,
+	Friend,
 };
 
 export default components;

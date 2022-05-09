@@ -19,6 +19,7 @@ export function createApp(root){
 				logined:true,
 				user:null,
 				friendlist:[],
+				needGetList:false,
 			};
 		},
 		created(){
@@ -65,6 +66,10 @@ export function createApp(root){
 							username:data.username,
 							password:data.password,
 						};
+
+						if (this.needGetList) {
+							this.getFriendList();
+						}
 					} else {
 						ElementPlus.ElNotification({
 							type:'error',
@@ -120,21 +125,22 @@ export function createApp(root){
 				},80);
 			},
 			getFriendList(){
-				if (this.logined) {
+				this.needGetList = true;
+				this.waitForLogined(() => {
 					io.once('friends',(result) => {
 						this.friendlist = result;
 					});
 
 					io.emit('friends');
-				} else {
-					setTimeout(() => {
-						io.once('friends',(result) => {
-							this.friendlist = result;
-						});
-
-						io.emit('friends');
-					},500);
-				}
+				});
+			},
+			waitForLogined(cb,...args){
+				var id = setInterval(() => {
+					if (this.logined) {
+						cb(...args);
+						clearInterval(id);
+					}
+				},50);
 			},
 			addFriend(name,success){
 				io.once('message',(result) => {
@@ -188,13 +194,13 @@ export function createApp(root){
 		components:{
 			'mb-menu':components.Menu,
 			'mb-login':components.Login,
-			'mb-friend-card':components.FriendCard,
 		},
 	});
 
 	app.io = io;
 	app.use(router);
 	app.use(ElementPlus);	// 引入element-plus组件库
+	app.component('mb-friend',components.Friend);
 
 	// 引入element-plus的图标
 	for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
